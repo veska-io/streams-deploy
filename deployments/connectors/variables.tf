@@ -19,7 +19,7 @@ variable "PROVIDER_REGION" {
   nullable = false
 }
 
-variable "BINANCE_FUTURES_KLINE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE_VER" {
+variable "BINANCE_FUTURES_KLINE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE" {
   type        = string
   description = "value of the version of the connector"
 

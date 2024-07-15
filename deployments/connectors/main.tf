@@ -14,7 +14,7 @@ module "binance_futures_kline_restc" {
 
   prefix             = var.PREFIX
   bucket_name        = "${var.PREFIX}functions-deploy"
-  artifact_name      = "binance_futures_kline_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_KLINE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE_VER}.zip"
+  artifact_name      = "binance_futures_kline_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_KLINE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
   vpc_connector_name = "${var.PREFIX}vpc-connector-0"
   schedule_topic_id  = module.schedule_hourly_1m.scheduled_topic.id
 
