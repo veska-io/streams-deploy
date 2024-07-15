@@ -3,6 +3,13 @@ provider "google" {
   region  = var.PROVIDER_REGION
 }
 
+terraform {
+  backend "gcs" {
+    bucket = "streams-functions-deploy"
+    prefix = "terraform/connectors-state"
+  }
+}
+
 module "schedule_hourly_1m" {
   source = "./schedules/hourly-1m"
 
