@@ -25,7 +25,7 @@ jobs:
             cp streams-deploy/scripts/generate_versions.sh streams-connectors/generate_versions.sh
             cd streams-connectors
 
-            ./generate_vars.sh
+            ./generate_versions.sh
             cp connectors.tfvars ../streams-deploy/deployments/connectors/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
