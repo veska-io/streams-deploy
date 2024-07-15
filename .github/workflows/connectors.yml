@@ -54,5 +54,6 @@ jobs:
 
             cd streams-deploy/deployments/connectors
             terraform init
-            terraform plan -no-color -input=false -var-file=connectors.tfvars
+
+            terraform apply -no-color -input=false -var-file=connectors.tfvars -auto-approve
         
