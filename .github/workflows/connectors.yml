@@ -19,6 +19,8 @@ jobs:
           with:
             repository: 'veska-io/streams-connectors'
             path: 'streams-connectors'
+            fetch-depth: 0
+            fetch-tags: true
 
         - name: Generate Versions
           run: |-
