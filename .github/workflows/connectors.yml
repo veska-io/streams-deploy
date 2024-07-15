@@ -44,12 +44,12 @@ jobs:
 
         - name: Plan
           run: |-
-            TF_VAR_PREFIX          = "${{ secrets.STREAMS_PREFIX }"
-            TF_VAR_GCP_PROJECT_ID  = "${{ secrets.GCP_PROJECT_ID }"
+            TF_VAR_PREFIX = "${{ secrets.STREAMS_PREFIX }"
+            TF_VAR_GCP_PROJECT_ID = "${{ secrets.GCP_PROJECT_ID }"
             TF_VAR_PROVIDER_REGION = "${{ secrets.GCP_CONNECTORS_REGION }"
-            TF_VAR_CLICKHOUSE_HOST     = "${{ secrets.CLICKHOUSE_HOST }"
+            TF_VAR_CLICKHOUSE_HOST = "${{ secrets.CLICKHOUSE_HOST }"
             TF_VAR_CLICKHOUSE_DATABASE = "${{ secrets.CLICKHOUSE_DATABASE }"
-            TF_VAR_CLICKHOUSE_USER     = "${{ secrets.CLICKHOUSE_USER }"
+            TF_VAR_CLICKHOUSE_USER = "${{ secrets.CLICKHOUSE_USER }"
             TF_VAR_CLICKHOUSE_PASSWORD = "${{ secrets.CLICKHOUSE_PASSWORD }"
 
             cd streams-deploy/deployments/connectors
