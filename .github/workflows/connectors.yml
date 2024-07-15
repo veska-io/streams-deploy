@@ -1,0 +1,40 @@
+name: 'Deploy Connectors'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      
+    steps:
+        - uses: actions/checkout@v4
+          path: streams-deploy
+
+        - uses: actions/checkout@v4
+          with:
+            repository: 'veska-io/streams-connectors'
+            path: 'streams-connectors'
+
+        - name: Generate Versions
+          run: |-
+            cd streams-conectors
+
+            ./generate_vars.sh
+            cp connectors.tfvars ../streams-deploy/deployments/connectors/connectors.tfvars
+
+            cd $GITHUB_WORKSPACE
+
+        - name: Google Auth
+          id: auth
+          uses: 'google-github-actions/auth@v2'
+          with:
+            token_format: 'access_token'
+            workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{ secrets.GCP_WIF_POOL}}/providers/${{ secrets.GCP_WIF_PROVIDER }}'
+            service_account: '${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}'
+
+        - uses: hashicorp/setup-terraform@v3
+        
