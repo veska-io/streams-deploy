@@ -22,9 +22,10 @@ jobs:
 
         - name: Generate Versions
           run: |-
+            cp streams-deploy/srcipts/generate_versions.sh streams-connectors/generate_versions.sh
             cd streams-connectors
 
-            ./scripts/generate_vars.sh
+            ./generate_vars.sh
             cp connectors.tfvars ../streams-deploy/deployments/connectors/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
