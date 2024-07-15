@@ -31,7 +31,7 @@ resource "google_cloudfunctions2_function" "binance_futures_kline_restc" {
       CONNECTOR_PRODUCER_DATABASE = var.clickhouse_database
       CONNECTOR_PRODUCER_USER     = var.clickhouse_user
       CONNECTOR_PRODUCER_PASSWORD = var.clickhouse_password
-      CONNECTOR_PRODUCER_TABLE    = "binance_klines_1h"
+      CONNECTOR_PRODUCER_TABLE    = "binance_futures_klines_1h"
     }
 
     vpc_connector                 = var.vpc_connector_name
