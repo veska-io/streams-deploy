@@ -24,7 +24,7 @@ jobs:
           run: |-
             cd streams-connectors
 
-            ./generate_vars.sh
+            ./scripts/generate_vars.sh
             cp connectors.tfvars ../streams-deploy/deployments/connectors/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
