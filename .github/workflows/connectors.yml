@@ -22,7 +22,7 @@ jobs:
 
         - name: Generate Versions
           run: |-
-            cd streams-conectors
+            cd streams-connectors
 
             ./generate_vars.sh
             cp connectors.tfvars ../streams-deploy/deployments/connectors/connectors.tfvars
