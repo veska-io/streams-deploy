@@ -55,5 +55,5 @@ jobs:
             cd streams-deploy/deployments/connectors
             terraform init
 
-            terraform apply -no-color -input=false -var-file=connectors.tfvars -auto-approve
+            terraform destroy -no-color -input=false -var-file=connectors.tfvars -auto-approve
         
