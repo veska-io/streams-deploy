@@ -22,9 +22,7 @@ jobs:
 
         - name: Generate Versions
           run: |-
-            ls
-
-            cp streams-deploy/srcipts/generate_versions.sh streams-connectors/generate_versions.sh
+            cp streams-deploy/scripts/generate_versions.sh streams-connectors/generate_versions.sh
             cd streams-connectors
 
             ./generate_vars.sh
