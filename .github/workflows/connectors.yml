@@ -12,7 +12,8 @@ jobs:
       
     steps:
         - uses: actions/checkout@v4
-          path: streams-deploy
+          with:
+            path: 'streams-deploy'
 
         - uses: actions/checkout@v4
           with:
@@ -37,4 +38,10 @@ jobs:
             service_account: '${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}'
 
         - uses: hashicorp/setup-terraform@v3
+
+        - name: Plan
+          run: |-
+            cd streams-deploy/deployments/connectors
+            terraform init
+            terraform plan -var-file=connectors.tfvars
         
