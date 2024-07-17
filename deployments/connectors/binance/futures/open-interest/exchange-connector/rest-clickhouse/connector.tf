@@ -26,6 +26,9 @@ resource "google_cloudfunctions2_function" "binance_futures_open_interest_restc"
     max_instance_count = 1
 
     environment_variables = {
+      // terraform always sets this, causing redeploy
+      LOG_EXECUTION_ID = "true"
+
       CONNECTOR_DEBUG             = "false"
       CONNECTOR_PRODUCER_HOST     = var.clickhouse_host
       CONNECTOR_PRODUCER_DATABASE = var.clickhouse_database
@@ -42,5 +45,6 @@ resource "google_cloudfunctions2_function" "binance_futures_open_interest_restc"
   event_trigger {
     event_type   = "google.cloud.pubsub.topic.v1.messagePublished"
     pubsub_topic = var.schedule_topic_id
+    retry_policy = "RETRY_POLICY_DO_NOT_RETRY"
   }
 }
