@@ -8,6 +8,11 @@ resource "google_compute_address" "static_ip_1" {
   region = var.region
 }
 
+resource "google_compute_address" "static_ip_2" {
+  name   = format("%s%s", var.prefix, "static-ip-2")
+  region = var.region
+}
+
 output "static_ip_0" {
   value = google_compute_address.static_ip_0
 }
