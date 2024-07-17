@@ -26,6 +26,13 @@ variable "BINANCE_FUTURES_KLINE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE" {
   nullable = false
 }
 
+variable "BINANCE_FUTURES_FUNDING-RATE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE" {
+  type        = string
+  description = "value of the version of the connector"
+
+  nullable = false
+}
+
 variable "CLICKHOUSE_HOST" {
   type = string
 

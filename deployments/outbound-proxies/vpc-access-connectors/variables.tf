@@ -19,9 +19,9 @@ variable "network_id" {
   nullable = false
 }
 
-variable "subnet_name" {
-  type        = string
-  description = "Subnet Name"
+variable "subnets" {
+  type        = list(string)
+  description = "Subnets Names"
 
   nullable = false
 }

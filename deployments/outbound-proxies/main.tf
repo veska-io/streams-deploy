@@ -3,6 +3,15 @@ provider "google" {
   region  = var.PROVIDER_REGION
 }
 
+terraform {
+  backend "gcs" {
+    bucket = "streams-functions-deploy"
+    prefix = "terraform/outbound-proxies-state"
+  }
+}
+
+// ==============================================================================================
+
 module "vpc" {
   source = "./vpc"
   prefix = var.PREFIX
@@ -26,10 +35,10 @@ module "static_ips" {
 module "vpc_access_connectors" {
   source = "./vpc-access-connectors"
 
-  prefix      = var.PREFIX
-  region      = var.PROVIDER_REGION
-  network_id  = format("%s%s", var.PREFIX, "vpc")
-  subnet_name = module.subnets.subnet.name
+  prefix     = var.PREFIX
+  region     = var.PROVIDER_REGION
+  network_id = format("%s%s", var.PREFIX, "vpc")
+  subnets    = [module.subnets.subnet_0.name, module.subnets.subnet_1.name]
 }
 
 module "nat" {
@@ -37,9 +46,9 @@ module "nat" {
   prefix = var.PREFIX
   region = var.PROVIDER_REGION
 
-  static_ip_id = module.static_ips.static_ip.id
-  net_name     = module.vpc.vpc.name
-  subnet_name  = module.subnets.subnet.name
+  static_ips = [module.static_ips.static_ip_0.id, module.static_ips.static_ip_1.id]
+  net_name   = module.vpc.vpc.name
+  subnets    = [module.subnets.subnet_0.name, module.subnets.subnet_1.name]
 
   depends_on = [module.vpc, module.subnets, module.static_ips]
 }

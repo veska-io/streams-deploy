@@ -3,6 +3,15 @@ provider "google" {
   region  = var.PROVIDER_REGION
 }
 
+terraform {
+  backend "gcs" {
+    bucket = "streams-functions-deploy"
+    prefix = "terraform/storage-bucket-state"
+  }
+}
+
+// ==============================================================================================
+
 resource "google_storage_bucket" "bucket" {
   name                        = format("%s%s", var.PREFIX, "functions-deploy")
   location                    = var.PROVIDER_REGION

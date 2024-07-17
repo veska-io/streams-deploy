@@ -12,16 +12,16 @@ variable "region" {
   nullable = false
 }
 
-variable "static_ip_id" {
-  type        = string
-  description = "ID of the Static IP"
+variable "static_ips" {
+  type        = list(string)
+  description = "IDs of the Static IP"
 
   nullable = false
 }
 
-variable "subnet_name" {
-  type        = string
-  description = "Name of the Subnet"
+variable "subnets" {
+  type        = list(string)
+  description = "Subnets Names"
 
   nullable = false
 }
