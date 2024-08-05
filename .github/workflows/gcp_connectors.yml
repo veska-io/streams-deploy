@@ -1,4 +1,4 @@
-name: 'Deploy Connectors'
+name: 'Deploy Connectors GCP'
 
 on:
   workflow_dispatch:
