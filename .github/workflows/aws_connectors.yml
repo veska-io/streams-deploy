@@ -28,7 +28,7 @@ jobs:
             cd streams-connectors
 
             ./generate_versions.sh
-            cp connectors.tfvars ../streams-deploy/deployments/gcp/connectors/connectors.tfvars
+            cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-north-1/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
 
@@ -41,7 +41,7 @@ jobs:
 
         - uses: hashicorp/setup-terraform@v3
 
-        - name: Plan
+        - name: Deploy eu-north-1
           run: |-
             export TF_VAR_CLICKHOUSE_HOST="${{ secrets.CLICKHOUSE_HOST }}"
             export TF_VAR_CLICKHOUSE_DATABASE="${{ secrets.CLICKHOUSE_DATABASE }}"
