@@ -1,0 +1,59 @@
+name: 'Deploy Connectors'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      
+    steps:
+        - uses: actions/checkout@v4
+          with:
+            path: 'streams-deploy'
+
+        - uses: actions/checkout@v4
+          with:
+            repository: 'veska-io/streams-connectors'
+            path: 'streams-connectors'
+            fetch-depth: 0
+            fetch-tags: true
+
+        - name: Generate Versions
+          run: |-
+            cp streams-deploy/scripts/generate_versions.sh streams-connectors/generate_versions.sh
+            cd streams-connectors
+
+            ./generate_versions.sh
+            cp connectors.tfvars ../streams-deploy/deployments/gcp/connectors/connectors.tfvars
+
+            cd $GITHUB_WORKSPACE
+
+        - name: Google Auth
+          id: auth
+          uses: 'google-github-actions/auth@v2'
+          with:
+            token_format: 'access_token'
+            workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{ secrets.GCP_WIF_POOL}}/providers/${{ secrets.GCP_WIF_PROVIDER }}'
+            service_account: '${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}'
+
+        - uses: hashicorp/setup-terraform@v3
+
+        - name: Plan
+          run: |-
+            export TF_VAR_PREFIX="${{ secrets.STREAMS_PREFIX }}"
+            export TF_VAR_GCP_PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
+            export TF_VAR_PROVIDER_REGION="${{ secrets.GCP_CONNECTORS_REGION }}"
+            export TF_VAR_CLICKHOUSE_HOST="${{ secrets.CLICKHOUSE_HOST }}"
+            export TF_VAR_CLICKHOUSE_DATABASE="${{ secrets.CLICKHOUSE_DATABASE }}"
+            export TF_VAR_CLICKHOUSE_USER="${{ secrets.CLICKHOUSE_USER }}"
+            export TF_VAR_CLICKHOUSE_PASSWORD="${{ secrets.CLICKHOUSE_PASSWORD }}"
+
+            cd streams-deploy/deployments/gcp/connectors
+            terraform init
+
+            terraform apply -no-color -input=false -var-file=connectors.tfvars -auto-approve
+        

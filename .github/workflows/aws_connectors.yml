@@ -28,31 +28,27 @@ jobs:
             cd streams-connectors
 
             ./generate_versions.sh
-            cp connectors.tfvars ../streams-deploy/deployments/connectors/connectors.tfvars
+            cp connectors.tfvars ../streams-deploy/deployments/gcp/connectors/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
 
-        - name: Google Auth
-          id: auth
-          uses: 'google-github-actions/auth@v2'
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v3
           with:
-            token_format: 'access_token'
-            workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{ secrets.GCP_WIF_POOL}}/providers/${{ secrets.GCP_WIF_PROVIDER }}'
-            service_account: '${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}'
+            role-to-assume: arn:aws:iam::869429936892:role/github-deploy
+            role-session-name: samplerolesession
+            aws-region: eu-north-1
 
         - uses: hashicorp/setup-terraform@v3
 
         - name: Plan
           run: |-
-            export TF_VAR_PREFIX="${{ secrets.STREAMS_PREFIX }}"
-            export TF_VAR_GCP_PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
-            export TF_VAR_PROVIDER_REGION="${{ secrets.GCP_CONNECTORS_REGION }}"
             export TF_VAR_CLICKHOUSE_HOST="${{ secrets.CLICKHOUSE_HOST }}"
             export TF_VAR_CLICKHOUSE_DATABASE="${{ secrets.CLICKHOUSE_DATABASE }}"
             export TF_VAR_CLICKHOUSE_USER="${{ secrets.CLICKHOUSE_USER }}"
             export TF_VAR_CLICKHOUSE_PASSWORD="${{ secrets.CLICKHOUSE_PASSWORD }}"
 
-            cd streams-deploy/deployments/connectors
+            cd streams-deploy/deployments/aws/exchanges-connectors/eu-north-1
             terraform init
 
             terraform apply -no-color -input=false -var-file=connectors.tfvars -auto-approve
