@@ -1,4 +1,4 @@
-name: 'Deploy Connectors AWS'
+name: 'Deploy Connectors AWS eu-west-3'
 
 on:
   workflow_dispatch:
@@ -29,6 +29,8 @@ jobs:
 
             ./generate_versions.sh
             cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-north-1/connectors.tfvars
+            cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-west-3/connectors.tfvars
+            cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-central-1/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
 
@@ -37,19 +39,18 @@ jobs:
           with:
             role-to-assume: arn:aws:iam::869429936892:role/github-deploy
             role-session-name: samplerolesession
-            aws-region: eu-north-1
+            aws-region: eu-west-3
 
         - uses: hashicorp/setup-terraform@v3
 
-        - name: Deploy eu-north-1
+        - name: Deploy eu-west-3
           run: |-
             export TF_VAR_CLICKHOUSE_HOST="${{ secrets.CLICKHOUSE_HOST }}"
             export TF_VAR_CLICKHOUSE_DATABASE="${{ secrets.CLICKHOUSE_DATABASE }}"
             export TF_VAR_CLICKHOUSE_USER="${{ secrets.CLICKHOUSE_USER }}"
             export TF_VAR_CLICKHOUSE_PASSWORD="${{ secrets.CLICKHOUSE_PASSWORD }}"
 
-            cd streams-deploy/deployments/aws/exchanges-connectors/eu-north-1
+            cd streams-deploy/deployments/aws/exchanges-connectors/eu-west-3
             terraform init
 
             terraform apply -no-color -input=false -var-file=connectors.tfvars -auto-approve
-        
