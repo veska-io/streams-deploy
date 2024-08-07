@@ -28,9 +28,7 @@ jobs:
             cd streams-connectors
 
             ./generate_versions.sh
-            cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-north-1/connectors.tfvars
             cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-west-3/connectors.tfvars
-            cp connectors.tfvars ../streams-deploy/deployments/aws/exchanges-connectors/eu-central-1/connectors.tfvars
 
             cd $GITHUB_WORKSPACE
 

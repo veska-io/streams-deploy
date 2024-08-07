@@ -17,18 +17,13 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-resource "aws_s3_object_copy" "copy_oi_artifact" {
-  bucket = "veska-deploy-eu-central-1"
-  key    = "connectors/binance_futures_open-interest_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_OPEN-INTEREST_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
-  source = "veska-deploy-eu-north-1/connectors/binance_futures_open-interest_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_OPEN-INTEREST_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
-}
-
 
 # ================================================               policy
 
 data "aws_iam_role" "connectors_iam_role" {
   name = "connectors-iam-role"
 }
+
 
 # ================================================               schedule
 
@@ -37,49 +32,36 @@ resource "aws_cloudwatch_event_rule" "schedule_hourly_1m" {
   schedule_expression = "cron(1 * * * ? *)"
 }
 
-resource "aws_cloudwatch_event_target" "schedule_hourly_1m_target" {
-  rule      = aws_cloudwatch_event_rule.schedule_hourly_1m.name
-  target_id = "binance-open-interest-connector-target"
-  arn       = aws_lambda_function.binance_futures_oi_exchange_connector_rest_clickhouse.arn
+
+# ================================================               connectors
+
+module "binance_futures_oi_restc" {
+  source = "./binance"
+
+  build_version = var.BINANCE_FUTURES_OPEN-INTEREST_EXCHANGE-CONNECTOR_REST-CLICKHOUSE
+
+  role_arn      = data.aws_iam_role.connectors_iam_role.arn
+  schedule_arn  = aws_cloudwatch_event_rule.schedule_hourly_1m.arn
+  schedule_name = aws_cloudwatch_event_rule.schedule_hourly_1m.name
+
+  clickhouse_host     = var.CLICKHOUSE_HOST
+  clickhouse_database = var.CLICKHOUSE_DATABASE
+  clickhouse_user     = var.CLICKHOUSE_USER
+  clickhouse_password = var.CLICKHOUSE_PASSWORD
 }
 
-resource "aws_lambda_permission" "allow_cloudwatch_to_call_connector" {
-  statement_id  = "AllowExecutionFromCloudWatch"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.binance_futures_oi_exchange_connector_rest_clickhouse.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.schedule_hourly_1m.arn
-}
 
-# ================================================               lambda
+module "bybit_futures_oi_restc" {
+  source = "./bybit"
 
-resource "aws_lambda_function" "binance_futures_oi_exchange_connector_rest_clickhouse" {
-  function_name = "binance-futures-open-interest-exchange-connector-rest-clickhouse"
+  build_version = var.BYBIT_FUTURES_OPEN-INTEREST_EXCHANGE-CONNECTOR_REST-CLICKHOUSE
 
-  runtime       = "provided.al2"
-  handler       = "bootstrap"
-  architectures = ["arm64"]
+  role_arn      = data.aws_iam_role.connectors_iam_role.arn
+  schedule_arn  = aws_cloudwatch_event_rule.schedule_hourly_1m.arn
+  schedule_name = aws_cloudwatch_event_rule.schedule_hourly_1m.name
 
-  package_type = "Zip"
-  s3_bucket    = "veska-deploy-eu-central-1"
-  s3_key       = "connectors/binance_futures_open-interest_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_OPEN-INTEREST_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
-
-  timeout     = 120
-  memory_size = 128
-
-
-  environment {
-    variables = {
-      CONNECTOR_DEBUG             = "false"
-      CONNECTOR_PRODUCER_HOST     = var.CLICKHOUSE_HOST
-      CONNECTOR_PRODUCER_DATABASE = var.CLICKHOUSE_DATABASE
-      CONNECTOR_PRODUCER_USER     = var.CLICKHOUSE_USER
-      CONNECTOR_PRODUCER_PASSWORD = var.CLICKHOUSE_PASSWORD
-      CONNECTOR_PRODUCER_TABLE    = "binance_futures_open_interest_1h"
-    }
-  }
-
-  role = data.aws_iam_role.connectors_iam_role.arn
-
-  depends_on = [aws_s3_object_copy.copy_oi_artifact]
+  clickhouse_host     = var.CLICKHOUSE_HOST
+  clickhouse_database = var.CLICKHOUSE_DATABASE
+  clickhouse_user     = var.CLICKHOUSE_USER
+  clickhouse_password = var.CLICKHOUSE_PASSWORD
 }
