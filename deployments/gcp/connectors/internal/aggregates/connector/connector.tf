@@ -28,12 +28,13 @@ resource "google_cloudfunctions2_function" "exchanges_events_connector" {
       CONNECTOR_DEBUG          = "false"
       CONNECTOR_CLOUD_FUNCTION = "true"
 
-      CONNECTOR_PRODUCER_HOST     = var.clickhouse_host
-      CONNECTOR_PRODUCER_PORT     = var.clickhouse_port
-      CONNECTOR_PRODUCER_DATABASE = var.clickhouse_database
-      CONNECTOR_PRODUCER_USER     = var.clickhouse_user
-      CONNECTOR_PRODUCER_PASSWORD = var.clickhouse_password
-      CONNECTOR_PRODUCER_TABLE    = var.clickhouse_table
+      CONNECTOR_CLICKHOUSE_HOST     = var.clickhouse_host
+      CONNECTOR_CLICKHOUSE_PORT     = var.clickhouse_port
+      CONNECTOR_CLICKHOUSE_DATABASE = var.clickhouse_database
+      CONNECTOR_CLICKHOUSE_USER     = var.clickhouse_user
+      CONNECTOR_CLICKHOUSE_PASSWORD = var.clickhouse_password
+
+      CONNECTOR_PRODUCER_TABLE = var.clickhouse_table
     }
   }
 
