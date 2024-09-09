@@ -10,59 +10,48 @@ terraform {
   }
 }
 
-module "schedule_hourly_1m" {
-  source = "./schedules/hourly-1m"
 
-  prefix = var.PREFIX
-}
+module "exchange-events-connector" {
+  source = "./internal/exchanges-events"
 
-module "binance_futures_kline_restc" {
-  source = "./binance/futures/kline/exchange-connector/rest-clickhouse"
-
-  prefix             = var.PREFIX
-  bucket_name        = "${var.PREFIX}functions-deploy"
-  artifact_name      = "binance_futures_kline_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_KLINE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
-  vpc_connector_name = "${var.PREFIX}vpc-connector-0"
-  schedule_topic_id  = module.schedule_hourly_1m.scheduled_topic.id
+  internal_exchanges_events_version = var.INTERNAL_EXCHANGES-EVENTS
 
   clickhouse_host     = var.CLICKHOUSE_HOST
+  clickhouse_port     = var.CLICKHOUSE_PORT
+  clickhouse_database = var.CLICKHOUSE_DATABASE
+  clickhouse_table    = var.CLICKHOUSE_EXCHANGES_EVENTS_TABLE
   clickhouse_user     = var.CLICKHOUSE_USER
   clickhouse_password = var.CLICKHOUSE_PASSWORD
-  clickhouse_database = var.CLICKHOUSE_DATABASE
-
-  depends_on = [module.schedule_hourly_1m.scheduled_job, module.schedule_hourly_1m.scheduled_topic]
 }
 
-module "binance_futures_funding_rate_restc" {
-  source = "./binance/futures/funding-rate/exchange-connector/rest-clickhouse"
+module "aggregates-connector" {
+  source = "./internal/aggregates"
 
-  prefix             = var.PREFIX
-  bucket_name        = "${var.PREFIX}functions-deploy"
-  artifact_name      = "binance_futures_funding-rate_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_FUNDING-RATE_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
-  vpc_connector_name = "${var.PREFIX}vpc-connector-1"
-  schedule_topic_id  = module.schedule_hourly_1m.scheduled_topic.id
+  aggregates_version = var.INTERNAL_AGGREGATES
 
   clickhouse_host     = var.CLICKHOUSE_HOST
+  clickhouse_port     = var.CLICKHOUSE_PORT
+  clickhouse_database = var.CLICKHOUSE_DATABASE
+  clickhouse_table    = var.CLICKHOUSE_AGGREGATES_TABLE
   clickhouse_user     = var.CLICKHOUSE_USER
   clickhouse_password = var.CLICKHOUSE_PASSWORD
-  clickhouse_database = var.CLICKHOUSE_DATABASE
-
-  depends_on = [module.schedule_hourly_1m.scheduled_job, module.schedule_hourly_1m.scheduled_topic]
 }
 
-module "binance_futures_open_interest_restc" {
-  source = "./binance/futures/open-interest/exchange-connector/rest-clickhouse"
+module "events-generators" {
+  source = "./events-generators"
 
-  prefix             = var.PREFIX
-  bucket_name        = "${var.PREFIX}functions-deploy"
-  artifact_name      = "binance_futures_open-interest_exchange-connector_rest-clickhouse@${var.BINANCE_FUTURES_OPEN-INTEREST_EXCHANGE-CONNECTOR_REST-CLICKHOUSE}.zip"
-  vpc_connector_name = "${var.PREFIX}vpc-connector-0"
-  schedule_topic_id  = module.schedule_hourly_1m.scheduled_topic_5m.id
+  binance_futures_kline_events_generator_version         = var.BINANCE_FUTURES_KLINE_EVENTS-GENERATOR
+  binance_futures_funding_rate_events_generator_version  = var.BINANCE_FUTURES_FUNDING-RATE_EVENTS-GENERATOR
+  binance_futures_open_interest_events_generator_version = var.BINANCE_FUTURES_OPEN-INTEREST_EVENTS-GENERATOR
+  bybit_futures_kline_events_generator_version           = var.BYBIT_FUTURES_KLINE_EVENTS-GENERATOR
+  bybit_futures_funding_rate_events_generator_version    = var.BYBIT_FUTURES_FUNDING-RATE_EVENTS-GENERATOR
+  bybit_futures_open_interest_events_generator_version   = var.BYBIT_FUTURES_OPEN-INTEREST_EVENTS-GENERATOR
+
+  events_topic_id = module.exchange-events-connector.exchanges_events_stream.name
 
   clickhouse_host     = var.CLICKHOUSE_HOST
+  clickhouse_port     = var.CLICKHOUSE_PORT
+  clickhouse_database = var.CLICKHOUSE_DATABASE
   clickhouse_user     = var.CLICKHOUSE_USER
   clickhouse_password = var.CLICKHOUSE_PASSWORD
-  clickhouse_database = var.CLICKHOUSE_DATABASE
-
-  depends_on = [module.schedule_hourly_1m.scheduled_topic_5m]
 }

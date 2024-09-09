@@ -1,40 +1,41 @@
-variable "prefix" {
-  type        = string
-  description = "Prefix"
-
-  default = ""
-}
-variable "bucket_name" {
-  type        = string
-  description = "Bucket name"
+variable "name" {
+  type = string
 
   nullable = false
 }
 
 variable "artifact_name" {
-  type        = string
-  description = "Artifact name"
+  type = string
 
   nullable = false
 }
 
-variable "vpc_connector_name" {
-  type        = string
-  description = "VPC name"
+variable "events_topic_id" {
+  type = string
 
   nullable = false
 }
 
-variable "schedule_topic_id" {
-  type        = string
-  description = "Schedule topic name"
+variable "trigger_topic_id" {
+  type = string
 
   nullable = false
 }
 
+variable "subscription_id" {
+  type = string
+
+  nullable = false
+}
 
 variable "clickhouse_host" {
   type = string
+
+  nullable = false
+}
+
+variable "clickhouse_port" {
+  type = number
 
   nullable = false
 }
@@ -52,6 +53,12 @@ variable "clickhouse_user" {
 }
 
 variable "clickhouse_password" {
+  type = string
+
+  nullable = false
+}
+
+variable "clickhouse_table" {
   type = string
 
   nullable = false
